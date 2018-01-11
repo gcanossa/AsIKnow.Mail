@@ -18,18 +18,14 @@ namespace AsIKnow.Mail
         }
 
         [HttpGet]
-        public async Task<IActionResult> ViewTest(string path)
+        public async Task<IActionResult> ViewTest(string viewTemplatePath)
         {
             if (!Env.IsProduction())
             {
-                var viewDataDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary());
-
-                foreach (var item in Request.Query)
-                {
-                    viewDataDictionary.Add(item.Key, item.Value);
-                }
-
-                return Content(await MailTemplateHelper.RenderView(path, viewDataDictionary), "text/html");
+                return Content(
+                    await MailTemplateHelper.RenderView(viewTemplatePath, 
+                    Request.Query.Where(p => p.Key != "viewTemplatePath").ToDictionary(p=>p.Key, p=>p.Value).AsViewData()), 
+                    "text/html");
             }
             else
             {

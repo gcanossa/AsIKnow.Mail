@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using System.IO;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace AsIKnow.Mail
 {
@@ -36,6 +37,12 @@ namespace AsIKnow.Mail
             if (ServiceProvider == null)
                 throw new InvalidOperationException($"In order to use the facade, {nameof(UseMailTemplates)} must be called in Startup.Configure method. ");
 
+            path = path ?? throw new ArgumentNullException(nameof(path));
+            viewDataDictionary = viewDataDictionary ?? throw new ArgumentNullException(nameof(viewDataDictionary));
+
+            path = path.EndsWith(".cshtml") ? path : $"{path}.cshtml";
+            path = path.Trim('/');
+
             using (IServiceScope scope = ServiceProvider.CreateScope())
             {
                 MailOptions options = scope.ServiceProvider.GetRequiredService<IOptions<MailOptions>>().Value;
@@ -49,6 +56,9 @@ namespace AsIKnow.Mail
                 using (StringWriter sw = new StringWriter())
                 {
                     ViewEngineResult viewResult = viewEngine.GetView($"{options.ViewTemplateBasePath}/{path}", $"{options.ViewTemplateBasePath}/{path}", true);
+
+                    if (viewResult?.View == null)
+                        throw new Exception($"View {options.ViewTemplateBasePath}/{path} not found.");
 
                     ViewContext viewContext = new ViewContext(actionContext, viewResult.View, viewDataDictionary, new TempDataDictionary(httpContextAccessor.HttpContext, tempDataProvider), sw, new HtmlHelperOptions());
 
@@ -67,6 +77,20 @@ namespace AsIKnow.Mail
                     return sw.ToString();
                 }
             }
+        }
+
+        public static ViewDataDictionary AsViewData<T>(this IEnumerable<KeyValuePair<string, T>> ext)
+        {
+            ViewDataDictionary tmp = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary());
+            if (ext != null)
+            {
+                foreach (KeyValuePair<string, T> kv in ext)
+                {
+                    tmp.Add(kv.Key, kv.Value);
+                }
+            }
+
+            return tmp;
         }
     }
 }
