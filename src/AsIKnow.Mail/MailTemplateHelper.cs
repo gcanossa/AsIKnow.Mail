@@ -14,14 +14,20 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace AsIKnow.Mail
 {
     public static class MailTemplateHelper
     {
-        public static IApplicationBuilder UseMailTemplates(this IApplicationBuilder ext, IServiceProvider serviceProvider)
+        public static void AddMailTemplates(this IServiceCollection services)
         {
-            ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        }
+
+        public static IApplicationBuilder UseMailTemplates(this IApplicationBuilder ext)
+        {
+            ServiceProvider = ext.ApplicationServices ?? throw new ArgumentNullException(nameof(ext.ApplicationServices));
             return ext;
         }
 

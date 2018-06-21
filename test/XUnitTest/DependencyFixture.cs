@@ -45,9 +45,9 @@ namespace XUnitTest
 
         }
 
-        public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app)
         {
-            app.UseMailTemplates(serviceProvider);
+            app.UseMailTemplates();
 
             //app.UseMvc(routes =>
             //{

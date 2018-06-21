@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsIKnow.Mail", "AsIKnow.Mail\AsIKnow.Mail.csproj", "{89F48EC1-44D7-4DF7-8E8A-BAE6725ECE08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnitTest", "..\test\XUnitTest\XUnitTest.csproj", "{196554FB-3CCE-4065-BB16-37596B8010AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XUnitTest", "..\test\XUnitTest\XUnitTest.csproj", "{196554FB-3CCE-4065-BB16-37596B8010AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTest", "..\test\WebTest\WebTest.csproj", "{1F4AF638-B2CC-4C5C-B67B-D5B8C15B1A14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{196554FB-3CCE-4065-BB16-37596B8010AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{196554FB-3CCE-4065-BB16-37596B8010AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{196554FB-3CCE-4065-BB16-37596B8010AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F4AF638-B2CC-4C5C-B67B-D5B8C15B1A14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F4AF638-B2CC-4C5C-B67B-D5B8C15B1A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F4AF638-B2CC-4C5C-B67B-D5B8C15B1A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F4AF638-B2CC-4C5C-B67B-D5B8C15B1A14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
