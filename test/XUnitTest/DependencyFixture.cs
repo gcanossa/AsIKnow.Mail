@@ -1,15 +1,17 @@
-﻿using AsIKnow.Mail;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AsIKnow.Mail;
 using AsIKnow.XUnitExtensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace XUnitTest
 {
@@ -25,7 +27,9 @@ namespace XUnitTest
             #region general
 
             services.AddSingleton<IHostingEnvironment>(new Mock<IHostingEnvironment>().Object);
-            services.AddSingleton<IApplicationBuilder>(new Mock<IApplicationBuilder>().Object);
+            var appBuilderMock = new Mock<IApplicationBuilder>();
+            appBuilderMock.SetupGet<IServiceProvider>(p => p.ApplicationServices).Returns(services.BuildServiceProvider());
+            services.AddSingleton<IApplicationBuilder>(appBuilderMock.Object);
 
             services.AddLogging(p => p.AddDebug());
 
@@ -34,13 +38,11 @@ namespace XUnitTest
             services.Configure<MailOptions>(Configuration.GetSection("Mail"));
             
             services.AddTransient<IEmailSender, EmailSender>();
-            
-            services.AddMvc()
-                .AddJsonOptions(options =>
-                {
-                    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-                });
-            
+
+
+            services.AddMailTemplates();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
             #endregion
 
         }
@@ -49,12 +51,10 @@ namespace XUnitTest
         {
             app.UseMailTemplates();
 
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute(
-            //        name: "default",
-            //        template: "{controller=Home}/{action=Index}/{id?}");
-            //});
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }

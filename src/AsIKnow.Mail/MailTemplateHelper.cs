@@ -55,8 +55,15 @@ namespace AsIKnow.Mail
                 ICompositeViewEngine viewEngine = scope.ServiceProvider.GetRequiredService<ICompositeViewEngine>();
                 ITempDataProvider tempDataProvider = scope.ServiceProvider.GetRequiredService<ITempDataProvider>();
                 IHttpContextAccessor httpContextAccessor = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
-
-                ActionContext actionContext = new ActionContext(httpContextAccessor.HttpContext, new RouteData(), new ActionDescriptor());
+                HttpContext httpContext = httpContextAccessor.HttpContext;
+                if (httpContext == null)
+                {
+                    httpContext = new DefaultHttpContext
+                    {
+                        RequestServices = scope.ServiceProvider
+                    };
+                }
+                ActionContext actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
                 viewDataDictionary.Model = null;
 
                 using (StringWriter sw = new StringWriter())
@@ -66,7 +73,7 @@ namespace AsIKnow.Mail
                     if (viewResult?.View == null)
                         throw new Exception($"View {options.ViewTemplateBasePath}/{path} not found.");
 
-                    ViewContext viewContext = new ViewContext(actionContext, viewResult.View, viewDataDictionary, new TempDataDictionary(httpContextAccessor.HttpContext, tempDataProvider), sw, new HtmlHelperOptions());
+                    ViewContext viewContext = new ViewContext(actionContext, viewResult.View, viewDataDictionary, new TempDataDictionary(httpContext, tempDataProvider), sw, new HtmlHelperOptions());
 
                     await viewResult.View.RenderAsync(viewContext);
                     sw.Flush();
